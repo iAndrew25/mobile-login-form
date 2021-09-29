@@ -5,6 +5,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import Button from '../../commons/components/button/button';
 
 import {logInAction} from '../../config/store/actions';
+import {login} from './login.service';
 
 import Colors from '../../commons/colors';
 import Units from '../../commons/units';
@@ -14,21 +15,24 @@ const fingerprintIcon = require('../../assets/images/fingerprint.png');
 const FINGERPRINT = 1;
 
 function Login({dispatch}) {
-	const [isFeatureCompatible, setIsFeatureCompatible] = useState();
-	const [whatIsAvailable, setWhatIsAvailable] = useState();
-	const [isAnythingSet, setIsAnythingSet] = useState();
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 
-	const shouldDisplayFingerprint = isAnythingSet && isFeatureCompatible && whatIsAvailable.includes(FINGERPRINT)
+	const [hasHardware, setHasHardware] = useState();
+	const [supportedTypes, setSupportedTypes] = useState();
+	const [isEnrolled, setIsEnrolled] = useState();
+
+	const shouldDisplayFingerprint = isEnrolled && hasHardware && supportedTypes.includes(FINGERPRINT)
 
 	useEffect(() => {
 		(async () => {
-			const a = await LocalAuthentication.hasHardwareAsync();
-			const b = await LocalAuthentication.supportedAuthenticationTypesAsync();
-			const c = await LocalAuthentication.isEnrolledAsync();
+			const hasHardwareResponse = await LocalAuthentication.hasHardwareAsync();
+			const supportedTypesResponse = await LocalAuthentication.supportedAuthenticationTypesAsync();
+			const isEnrolledResponse = await LocalAuthentication.isEnrolledAsync();
 
-			setIsFeatureCompatible(a);
-			setWhatIsAvailable(b);
-			setIsAnythingSet(c);
+			setHasHardware(hasHardwareResponse);
+			setSupportedTypes(supportedTypesResponse);
+			setIsEnrolled(isEnrolledResponse);
 		})();
 	}, []);
 
@@ -42,16 +46,22 @@ function Login({dispatch}) {
 		success && dispatch(logInAction);
 	};
 
+	const handleOnLogin = async () => {
+		const {success} = await login({email, password});
+
+		success && dispatch(logInAction);
+	}
+
 	return (
 		<View style={styles.wrapper}>
 			<Text style={styles.title}>Log in to your account</Text>
 			<View style={styles.form}>
-				<TextInput style={styles.textinput}/>
-				<TextInput style={styles.textinput}/>
+				<TextInput value={email} onChangeText={setEmail} placeholder="Email" placeholderTextColor={Colors.primaryText} style={styles.textinput}/>
+				<TextInput value={password} onChangeText={setPassword} placeholder="Password" secureTextEntry placeholderTextColor={Colors.primaryText} style={styles.textinput}/>
 				<View style={styles.formFooter}>
-					<Button text="Login" style={styles.login} onPress={console.log}/>
-					{true && <TouchableOpacity activeOpacity={0.7} style={styles.fingerprintWrapper} onPress={handleOnAuthenticate}>
-						<Image source={fingerprintIcon} style={styles.fingerprintImage}/>
+					<Button text="Login" style={styles.login} onPress={handleOnLogin} />
+					{shouldDisplayFingerprint && <TouchableOpacity activeOpacity={0.7} style={styles.fingerprintWrapper} onPress={handleOnAuthenticate}>
+						<Image source={fingerprintIcon} style={styles.fingerprintImage} />
 					</TouchableOpacity>}
 				</View>
 			</View>
