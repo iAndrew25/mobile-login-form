@@ -9,7 +9,7 @@ import {logInAction} from '../../config/store/actions';
 import Colors from '../../commons/colors';
 import Units from '../../commons/units';
 
-const loginPic = require('../../assets/images/fingerprint.png');
+const fingerprintIcon = require('../../assets/images/fingerprint.png');
 
 const FINGERPRINT = 1;
 
@@ -40,20 +40,18 @@ function Login({dispatch}) {
 		});
 
 		success && dispatch(logInAction);
-	}
-			// <Text>Login</Text>
-			// <Text>isFeatureCompatible: {JSON.stringify(isFeatureCompatible)}</Text>
-			// <Text>whatIsAvailable: {JSON.stringify(whatIsAvailable)}</Text>
-			// <Text>isAnythingSet: {JSON.stringify(isAnythingSet)}</Text>
+	};
+
 	return (
 		<View style={styles.wrapper}>
+			<Text style={styles.title}>Log in to your account</Text>
 			<View style={styles.form}>
 				<TextInput style={styles.textinput}/>
 				<TextInput style={styles.textinput}/>
 				<View style={styles.formFooter}>
-					<Button text="Login" onPress={console.log}/>
+					<Button text="Login" style={styles.login} onPress={console.log}/>
 					{true && <TouchableOpacity activeOpacity={0.7} style={styles.fingerprintWrapper} onPress={handleOnAuthenticate}>
-						<Image source={loginPic} style={styles.fingerprintImage}/>
+						<Image source={fingerprintIcon} style={styles.fingerprintImage}/>
 					</TouchableOpacity>}
 				</View>
 			</View>
@@ -68,6 +66,12 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center'
 	},
+	title: {
+		color: Colors.primaryText,
+		fontSize: 20,
+		textAlign: 'center',
+		marginBottom: Units.x3
+	},
 	form: {
 		width: Units.x37,
 		alignSelf: 'center'
@@ -77,8 +81,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
+	login: {
+		flex: 1
+	},
 	textinput: {
-		padding: Units.x1,
+		paddingVertical: Units.x1,
+		paddingHorizontal: Units.x2,
 		borderRadius: Units.x7,
 		borderColor: Colors.white,
 		borderWidth: 4,

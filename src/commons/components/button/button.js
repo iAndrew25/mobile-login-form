@@ -4,9 +4,9 @@ import { TouchableOpacity, StyleSheet, Text } from 'react-native';
 import Colors from '../../colors';
 import Units from '../../units';
 
-function Button({ text, ...rest }) {
+function Button({ text, style, ...rest }) {
 	return (
-		<TouchableOpacity style={styles.wrapper} activeOpacity={0.7} {...rest}>
+		<TouchableOpacity style={StyleSheet.compose(styles.wrapper, style)} activeOpacity={0.7} {...rest}>
 			<Text style={styles.text}>{text}</Text>
 		</TouchableOpacity>
 	);
@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
 		borderRadius: Units.x7,
 		borderColor: Colors.white,
 		borderWidth: 4,
-		flex: 1
 	},
 	text: {
 		color: Colors.primaryText,
